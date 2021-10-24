@@ -18,7 +18,7 @@
         <input
           id="key"
           :value="store.interval / 1000"
-          @input="changeInterval(Math.max(1000, $event.target.value * 1000))"
+          @input="inputInterval"
           type="number"
           autocomplete="off"
         />
@@ -89,6 +89,12 @@ function setupUpdate(store: any) {
   }
   return { changeInterval }
 }
+
+const inputInterval = ($event: Event) =>{
+  const target = $event.target as HTMLInputElement
+  changeInterval(Math.max(1000, parseFloat(target.value)*1000))
+}
+
 
 const { changeInterval } = setupUpdate(store)
 </script>

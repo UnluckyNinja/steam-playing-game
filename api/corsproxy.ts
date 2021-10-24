@@ -10,15 +10,6 @@ const corsHeaders = {
   "Access-Control-Max-Age": "86400",
 }
 
-// The rest of this snippet for the demo page
-function rawHtmlResponse(html) {
-  return new Response(html, {
-    headers: {
-      "content-type": "text/html;charset=UTF-8",
-    },
-  })
-}
-
 async function handleRequest(request: VercelRequest) {
   const { url: apiUrl } = request.query;
   const url = new URL(request.url, `http://${request.headers.host}`)
