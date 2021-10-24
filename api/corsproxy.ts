@@ -12,7 +12,7 @@ const corsHeaders = {
 
 async function handleRequest(request: VercelRequest) {
   const { url: apiUrl } = request.query;
-  const url = new URL(request.url, `http://${request.headers.host}`)
+  const url = new URL(request.url, `http://${request.headers.host ?? 'vercel.com'}`)
   if (!apiUrl) {
     return new Response(null, {status: 400, statusText: 'param "url" not defined'})
   }
@@ -75,7 +75,7 @@ const PROXY_ENDPOINT = "/api/corsproxy/"
 export default (request: VercelRequest, response: VercelResponse) => {
   const { url: apiUrl } = request.query;
 
-  const url = new URL(request.url)
+  const url = new URL(request.url ?? PROXY_ENDPOINT)
   if(url.pathname.startsWith(PROXY_ENDPOINT)){
     if (request.method === "OPTIONS") {
       // Handle CORS preflight requests
