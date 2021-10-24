@@ -58,12 +58,12 @@ const store = useStorage('store', {
   game: '',
   key: '',
   steamID: '',
-  interval: 5000
+  interval: 10000
 })
 const fetchGame = async (key: string, steamID: string) => {
   if (!key || !steamID) return ''
   const res = await fetch('/api/playing/?key=' + store.value.key + '&steamID=' + store.value.steamID)
-  store.value.game = (await res.json()).response.players[0].gameextrainfo
+  store.value.game = (await res.json()).response.players[0].gameextrainfo ?? ''
 }
 
 function setupUpdate(store: any) {
@@ -81,13 +81,13 @@ function setupUpdate(store: any) {
   return { changeInterval }
 }
 
+
+const { changeInterval } = setupUpdate(store)
+
 const inputInterval = ($event: Event) => {
   const target = $event.target as HTMLInputElement
   changeInterval(Math.max(1000, parseFloat(target.value) * 1000))
 }
-
-
-const { changeInterval } = setupUpdate(store)
 </script>
 
 <style>
@@ -107,7 +107,7 @@ const { changeInterval } = setupUpdate(store)
 body {
   font-size: 1.5rem;
   height: 100vh;
-  overflow: auto;
+  overflow-y: auto;
 }
 ::-webkit-scrollbar {
   width: 0; /* Remove scrollbar space */
