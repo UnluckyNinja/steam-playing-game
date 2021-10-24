@@ -80,7 +80,7 @@ export default (request: VercelRequest, response: VercelResponse) => {
     if (request.method === "OPTIONS") {
       // Handle CORS preflight requests
       const res = handleOptions(request)
-      const headers = {}
+      const headers = {} as any
       res.headers.forEach((value, key)=>{
         headers[key] = value
       })
@@ -94,7 +94,7 @@ export default (request: VercelRequest, response: VercelResponse) => {
     ){
       // Handle requests to the API server
       handleRequest(request).then(async (res)=>{
-        const headers = {}
+        const headers = {} as any
         res.headers.forEach((value, key)=>{
           headers[key] = value
         })
