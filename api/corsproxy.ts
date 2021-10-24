@@ -14,7 +14,7 @@ async function handleRequest(request: VercelRequest) {
   const { url: apiUrl } = request.query;
   const url = new URL(request.url ?? PROXY_ENDPOINT, `http://${request.headers.host ?? 'vercel.com'}`)
   if (!apiUrl) {
-    return new Response(null, {status: 400, statusText: 'param "url" not defined'})
+    return new Response(null, { status: 400, statusText: 'param "url" not defined' })
   }
 
   // Rewrite request to point to API url. This also makes the request mutable
@@ -44,14 +44,14 @@ function handleOptions(request: VercelRequest) {
     headers["origin"] !== null &&
     headers["access-control-request-method"] !== null &&
     headers["access-control-request-headers"] !== null
-  ){
+  ) {
     // Handle CORS pre-flight request.
     // If you want to check or reject the requested method + headers
     // you can do that here.
     const respHeaders = {
       ...corsHeaders,
-    // Allow all future content Request headers to go back to browser
-    // such as Authorization (Bearer) or X-Client-Name-Version
+      // Allow all future content Request headers to go back to browser
+      // such as Authorization (Bearer) or X-Client-Name-Version
       "Access-Control-Allow-Headers": request.headers["access-control-request-headers"] ?? '*',
     }
 
@@ -75,35 +75,32 @@ const PROXY_ENDPOINT = "/api/corsproxy/"
 export default (request: VercelRequest, response: VercelResponse) => {
   const { url: apiUrl } = request.query;
 
-  const url = new URL(request.url ?? PROXY_ENDPOINT)
-  if(url.pathname.startsWith(PROXY_ENDPOINT)){
-    if (request.method === "OPTIONS") {
-      // Handle CORS preflight requests
-      const res = handleOptions(request)
+  if (request.method === "OPTIONS") {
+    // Handle CORS preflight requests
+    const res = handleOptions(request)
+    const headers = {} as any
+    res.headers.forEach((value, key) => {
+      headers[key] = value
+    })
+    response.writeHead(res.status, res.statusText, headers)
+    response.send(res.body)
+  }
+  else if (
+    request.method === "GET" ||
+    request.method === "HEAD" ||
+    request.method === "POST"
+  ) {
+    // Handle requests to the API server
+    handleRequest(request).then(async (res) => {
       const headers = {} as any
-      res.headers.forEach((value, key)=>{
+      res.headers.forEach((value, key) => {
         headers[key] = value
       })
-      response.writeHead(res.status,res.statusText, headers)
-      response.send(res.body)
-    }
-    else if(
-      request.method === "GET" ||
-      request.method === "HEAD" ||
-      request.method === "POST"
-    ){
-      // Handle requests to the API server
-      handleRequest(request).then(async (res)=>{
-        const headers = {} as any
-        res.headers.forEach((value, key)=>{
-          headers[key] = value
-        })
-        response.writeHead(res.status, res.statusText, headers)
-        response.json(await res.json())
-      })
-    }
-    else {
-      response.status(400).send('bad request')
-    }
+      response.writeHead(res.status, res.statusText, headers)
+      response.json(await res.json())
+    })
+  }
+  else {
+    response.status(400).send('bad request')
   }
 };
