@@ -23,13 +23,15 @@ async function handleRequest(request: VercelRequest) {
   // so we can add the correct Origin header to make the API server think
   // that this request isn't cross-site.
   const newRequest = new Request(target.href, request as any)
-  console.log(request)
   newRequest.headers.set("Origin", target.origin)
+
   let response = await fetch(newRequest, {
     agent: new https.Agent({
       rejectUnauthorized: false
     })
   })
+  console.log(newRequest.url)
+  console.log(await response.text())
 
   // Recreate the response so we can modify the headers
   response = new Response(response.body, response)

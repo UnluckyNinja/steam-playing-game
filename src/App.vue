@@ -62,17 +62,8 @@ const store = useStorage('store', {
 })
 const fetchGame = async (key: string, steamID: string) => {
   if (!key || !steamID) return ''
-  const res = await fetch(
-    '/api/corsproxy/?url='+encodeURIComponent('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=' +
-    store.value.key +
-    '&steamids=' +
-    store.value.steamID),
-    {
-      mode: 'cors',
-      method: 'GET'
-    }
-  )
-  return (await res.json()).response.players[0].gameextrainfo
+  const res = await fetch('/api/playing/?key=' + store.value.key + '&steamID=' + store.value.steamID)
+  store.value.game = (await res.json()).response.players[0].gameextrainfo
 }
 
 function setupUpdate(store: any) {
@@ -90,9 +81,9 @@ function setupUpdate(store: any) {
   return { changeInterval }
 }
 
-const inputInterval = ($event: Event) =>{
+const inputInterval = ($event: Event) => {
   const target = $event.target as HTMLInputElement
-  changeInterval(Math.max(1000, parseFloat(target.value)*1000))
+  changeInterval(Math.max(1000, parseFloat(target.value) * 1000))
 }
 
 
