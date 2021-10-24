@@ -12,7 +12,7 @@ const corsHeaders = {
 
 async function handleRequest(request: VercelRequest) {
   const { url: apiUrl } = request.query;
-  const url = new URL(request.url, `http://${request.headers.host ?? 'vercel.com'}`)
+  const url = new URL(request.url ?? PROXY_ENDPOINT, `http://${request.headers.host ?? 'vercel.com'}`)
   if (!apiUrl) {
     return new Response(null, {status: 400, statusText: 'param "url" not defined'})
   }
@@ -52,7 +52,7 @@ function handleOptions(request: VercelRequest) {
       ...corsHeaders,
     // Allow all future content Request headers to go back to browser
     // such as Authorization (Bearer) or X-Client-Name-Version
-      "Access-Control-Allow-Headers": request.headers["access-control-request-headers"],
+      "Access-Control-Allow-Headers": request.headers["access-control-request-headers"] ?? '*',
     }
 
     return new Response(null, {
@@ -80,7 +80,10 @@ export default (request: VercelRequest, response: VercelResponse) => {
     if (request.method === "OPTIONS") {
       // Handle CORS preflight requests
       const res = handleOptions(request)
-      const headers = Object.fromEntries(res.headers.entries())
+      const headers = {}
+      res.headers.forEach((value, key)=>{
+        headers[key] = value
+      })
       response.writeHead(res.status,res.statusText, headers)
       response.send(res.body)
     }
@@ -91,7 +94,10 @@ export default (request: VercelRequest, response: VercelResponse) => {
     ){
       // Handle requests to the API server
       handleRequest(request).then(async (res)=>{
-        const headers = Object.fromEntries(res.headers.entries())
+        const headers = {}
+        res.headers.forEach((value, key)=>{
+          headers[key] = value
+        })
         response.writeHead(res.status, res.statusText, headers)
         response.json(await res.json())
       })
