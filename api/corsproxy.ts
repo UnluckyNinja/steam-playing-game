@@ -17,12 +17,12 @@ async function handleRequest(request: VercelRequest) {
   if (!apiUrl) {
     return new Response(null, { status: 400, statusText: 'param "url" not defined' })
   }
-
+  const target = new URL(apiUrl as string)
   // Rewrite request to point to API url. This also makes the request mutable
   // so we can add the correct Origin header to make the API server think
   // that this request isn't cross-site.
-  const newRequest = new Request(apiUrl as string, request as any)
-  newRequest.headers.set("Origin", new URL(apiUrl as string).origin)
+  const newRequest = new Request(`${target.hostname}:443${target.pathname}${target.search}`, request as any)
+  newRequest.headers.set("Origin", target.origin)
   let response = await fetch(newRequest)
 
   // Recreate the response so we can modify the headers
