@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import fetch, { Request, Response } from 'node-fetch';
+import fetch, { Request, Response } from 'cross-fetch';
 
 // We support the GET, POST, HEAD, and OPTIONS methods from any origin,
 // and allow any header on requests. These headers must be present
