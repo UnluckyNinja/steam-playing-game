@@ -1,5 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import fetch, { Request, Response } from 'cross-fetch';
+import fetch, { Request, Response } from 'node-fetch';
+import https from 'https'
 
 // We support the GET, POST, HEAD, and OPTIONS methods from any origin,
 // and allow any header on requests. These headers must be present
@@ -24,7 +25,11 @@ async function handleRequest(request: VercelRequest) {
   const newRequest = new Request(target.href, request as any)
   console.log(request)
   newRequest.headers.set("Origin", target.origin)
-  let response = await fetch(newRequest)
+  let response = await fetch(newRequest, {
+    agent: new https.Agent({
+      rejectUnauthorized: false
+    })
+  })
 
   // Recreate the response so we can modify the headers
   response = new Response(response.body, response)
