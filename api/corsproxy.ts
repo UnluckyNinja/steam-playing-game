@@ -21,7 +21,8 @@ async function handleRequest(request: VercelRequest) {
   // Rewrite request to point to API url. This also makes the request mutable
   // so we can add the correct Origin header to make the API server think
   // that this request isn't cross-site.
-  const newRequest = new Request(`${target.hostname}:443${target.pathname}${target.search}`, request as any)
+  const newRequest = new Request(target.href, request as any)
+  console.log(request)
   newRequest.headers.set("Origin", target.origin)
   let response = await fetch(newRequest)
 
