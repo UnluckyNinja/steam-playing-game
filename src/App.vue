@@ -6,16 +6,16 @@
   <div class="default-hide">
     <div>
       <div>
-        <label>显示文本</label>
+        <label>显示文本模版(<code>[GAME]</code>会被替换为游戏名)</label>
         <input v-model="store.message" type="text" autocomplete="off" />
       </div>
       <div>
         <label>密钥:</label>
-        <input v-model="store.key" type="password" />
+        <input v-model="store.key" type="password" autocomplete="off" />
       </div>
       <div>
         <label>Steam 64位 ID:</label>
-        <input v-model="store.steamID" type="password" />
+        <input v-model="store.steamID" type="password" autocomplete="off" />
       </div>
       <div>
         <label>更新间隔（秒）</label>
@@ -47,7 +47,7 @@
         打开OBS等，添加浏览器源，填入本网页网址，宽度根据常玩的游戏名自动调整，高度100px足够，点击确定保存
         <br />* 自定义参考CSS：
         <pre>body { color: white; background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow-y: auto; }
-          #status-text { /* 在此处填入显示文本的CSS样式 */ }
+#status-text { /* 在此处填入显示文本的CSS样式 */ }
         </pre>
       </li>
       <li>右键场景来源中对应项，点击倒数第三项：互动，在打开的窗口内填入对应内容，关闭即可</li>
