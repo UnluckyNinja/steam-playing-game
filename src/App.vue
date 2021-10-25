@@ -1,22 +1,25 @@
 <template>
   <div>
     <div v-if="!store.game && !store.key">鼠标悬停此处查看说明</div>
-    <span v-if="store.game">游戏：{{ store.game }}</span>
+    <span id="status-text" v-if="store.game">{{ store.message.replace(`[GAME]`, store.game) }}</span>
   </div>
   <div class="default-hide">
     <div>
       <div>
-        <label for="key">密钥:</label>
-        <input id="key" v-model="store.key" type="password" />
+        <label>显示文本</label>
+        <input v-model="store.message" type="text" autocomplete="off" />
       </div>
       <div>
-        <label for="key">Steam 64位 ID:</label>
-        <input id="key" v-model="store.steamID" type="password" />
+        <label>密钥:</label>
+        <input v-model="store.key" type="password" />
       </div>
       <div>
-        <label for="key">更新间隔（秒）</label>
+        <label>Steam 64位 ID:</label>
+        <input v-model="store.steamID" type="password" />
+      </div>
+      <div>
+        <label>更新间隔（秒）</label>
         <input
-          id="key"
           :value="store.interval / 1000"
           @input="inputInterval"
           type="number"
@@ -43,7 +46,9 @@
       <li>
         打开OBS等，添加浏览器源，填入本网页网址，宽度根据常玩的游戏名自动调整，高度100px足够，点击确定保存
         <br />* 自定义参考CSS：
-        <pre>body { color: white; background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow-y: auto; }</pre>
+        <pre>body { color: white; background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow-y: auto; }
+          #status-text { /* 在此处填入显示文本的CSS样式 */ }
+        </pre>
       </li>
       <li>右键场景来源中对应项，点击倒数第三项：互动，在打开的窗口内填入对应内容，关闭即可</li>
     </ol>
@@ -54,7 +59,7 @@
 import { useStorage } from '@vueuse/core';
 
 const store = useStorage('store', {
-  message: '',
+  message: '游戏：[GAME]',
   game: '',
   key: '',
   steamID: '',
